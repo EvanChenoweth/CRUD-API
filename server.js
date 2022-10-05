@@ -8,6 +8,7 @@ const morgan = require("morgan") // import morgan
 const path = require("path") // import path module
 const GameRouter = require('./controllers/gameControllers')
 const UserRouter = require('./controllers/userControllers')
+const CommentRouter = require('./controllers/commentControllers')
 const middleware = require('./utils/middleware')
 
 /////////////////////////////////////////////
@@ -35,6 +36,7 @@ app.get("/", (req, res) => {
 /////////////////////////////////////////////
 app.use('/games', GameRouter)
 app.use('/users', UserRouter)
+app.use('/comments', CommentRouter)
 /////////////////////////////////////////////
 // Server Listener
 /////////////////////////////////////////////
