@@ -51,6 +51,7 @@ router.get("/games", (req, res) => {
 router.post("/games", (req, res) => {
     // here, we'll get something called a request body
     // inside this function, that will be referred to as req.body
+    req.body.owner = req.session.userId
     // we'll use the mongoose model method `create` to make a new fruit
     Game.create(req.body)
         .then(game => {
