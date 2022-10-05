@@ -94,6 +94,23 @@ router.delete("/games/:id", (req, res) => {
         .catch(err => res.json(err))
 })
 
+// SHOW request
+// read route -> finds and displays a single resource
+router.get("/:id", (req, res) => {
+    const id = req.params.id
+
+    Game.findById(id)
+        // populate will provide more data about the document that is in the specified collection
+        // the first arg is the field to populate
+        // the second can specify which parts to keep or which to remove
+        // .populate("owner", "username")
+        // we can also populate fields of our subdocuments
+        .populate("comments.author", "username")
+        .then(game => {
+            res.json({ game: game })
+        })
+        .catch(err => console.log(err))
+})
 //////////////////////////////////////////
 // Export the Router
 //////////////////////////////////////////
