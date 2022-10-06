@@ -1,0 +1,28 @@
+{% layout 'layout.liquid' %}
+{% block content %}
+  <div>
+    <h2 class="display-6">All Games</h2>
+    <div class="row">
+      {% for game in games %}
+        <div class="card">
+          <h5 class="card-header">{{ game.name }}
+          </h5>
+          <div class="card-body">
+            <h5 class="card-title" style="width: 18 rem;">
+              {% if game.freeToPlay %}
+                    Free to play
+                {% else %}
+                    Not F2P
+              {% endif %}
+            </h5>
+            <p class="card-text">The genre of this
+              {{ game.name }}
+              is
+              {{ game.genre }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}}}

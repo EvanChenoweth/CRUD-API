@@ -41,6 +41,10 @@ router.post('/signup', async (req, res) => {
         })
 })
 
+router.get('/login', (req, res) => {
+    res.render('users/login')
+})
+
 // a route for log in
 router.post('/login', async (req, res) => {
     //get out data from the req body, saved as separate variables

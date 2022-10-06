@@ -33,15 +33,16 @@ router.get("/game/list", (req, res) => {
 
 // GET request
 // index route -> shows all instances of a document in the db
-router.get("/games", (req, res) => {
+router.get("/", (req, res) => {
     // console.log("this is the request", req)
     // in our index route, we want to use mongoose model methods to get our data
     Game.find({})
+        .populate('comments.author', 'username')
         .then(games => {
             // this is fine for initial testing
             // res.send(fruits)
             // this the preferred method for APIs
-            res.json({ games: games })
+            res.render('games/index', { games })
         })
         .catch(err => console.log(err))
 })
