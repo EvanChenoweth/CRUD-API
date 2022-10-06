@@ -13,6 +13,9 @@ const router = express.Router()
 /////////////////////////////////////////
 // Routes
 /////////////////////////////////////////
+router.get('/signup', (req, res) => {
+    res.render('users/signup')
+})
 // route for sign up
 router.post('/signup', async (req, res) => {
     // this route will receive a req.body

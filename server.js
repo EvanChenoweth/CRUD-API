@@ -27,7 +27,7 @@ middleware(app)
 // Home Route
 /////////////////////////////////////////////
 app.get("/", (req, res) => {
-    res.send("Your server is running, better go out and catch it")
+    res.render('index.liquid')
     // you can also send html as a string from res.send
     // res.send("<small style='color: red'>Your server is running, better go out and catch it</small>")
 })
