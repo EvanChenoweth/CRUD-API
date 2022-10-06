@@ -15,7 +15,7 @@ const middleware = require('./utils/middleware')
 // Create our Express Application Object
 /////////////////////////////////////////////
 
-const app = express()
+const app = require('liquid-express-views')(express())
 
 /////////////////////////////////////////////
 // Middleware Import
