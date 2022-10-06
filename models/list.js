@@ -24,7 +24,6 @@ db.on('open', () => {
             Game.create(startGames)
                 .then(data => {
                     console.log('here are the newly created fruits', data)
-
                     db.close()
                 })
                 .catch(error => {console.log(error)})

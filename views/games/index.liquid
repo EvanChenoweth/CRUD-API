@@ -10,9 +10,9 @@
           <div class="card-body">
             <h5 class="card-title" style="width: 18 rem;">
               {% if game.freeToPlay %}
-                    Free to play
-                {% else %}
-                    Not F2P
+                Free to play
+              {% else %}
+                Not F2P
               {% endif %}
             </h5>
             <p class="card-text">The genre of this
@@ -20,9 +20,13 @@
               is
               {{ game.genre }}
             </p>
+            <a href="/games/{{game.id}}" class="btn btn-info">
+              View
+              {{game.name}}
+            </a>
           </div>
         </div>
       {% endfor %}
     </div>
   </div>
-{% endblock %}}}
+{% endblock %}}}}

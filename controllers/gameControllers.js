@@ -5,43 +5,27 @@ const express = require("express")
 const Game = require("../models/game")
 
 /////////////////////////////////////////
-// Create Routes
+// Create Router
 /////////////////////////////////////////
-
 const router = express.Router()
 
-router.get("/game/list", (req, res) => {
-    // array of starter fruits
-    const startGames = [
-        { name: "Super Mario Bros.", genre: "Adventure", freeToPlay: false },
-        { name: "The Legend of Zelda", genre: "Adventure", freeToPlay: false },
-        { name: "Mario Kart", genre: "Racing", freeToPlay: false },
-        { name: "Pokemon", genre: "Adventure & Strategy RPG", freeToPlay: false },
-        { name: "League of Legends", genre: "MOBA", freeToPlay: false },
-    ]
-
-    // Delete every fruit in the db
-    Game.deleteMany({})
-        .then(() => {
-            // seed with the starter fruits array
-            Game.create(startGames)
-                .then(data => {
-                    res.json(data)
-                })
-        })
-})
-
+/////////////////////////////////////////////
+// Routes
+////////////////////////////////////////////
 // GET request
 // index route -> shows all instances of a document in the db
 router.get("/", (req, res) => {
     // console.log("this is the request", req)
     // in our index route, we want to use mongoose model methods to get our data
     Game.find({})
-        .populate('comments.author', 'username')
+        .populate("comments.author", "username")
         .then(games => {
+            // console.log(fruits)
             // this is fine for initial testing
             // res.send(fruits)
             // this the preferred method for APIs
+            // res.json({ fruits: fruits })
+            // here, we're going to render a page, but we can also send data that we got from the database to that liquid page for rendering
             res.render('games/index', { games })
         })
         .catch(err => console.log(err))
@@ -49,50 +33,93 @@ router.get("/", (req, res) => {
 
 // POST request
 // create route -> gives the ability to create new fruits
-router.post("/games", (req, res) => {
+router.post("/", (req, res) => {
     // here, we'll get something called a request body
     // inside this function, that will be referred to as req.body
+    // this is going to add ownership, via a foreign key reference, to our fruits
+    // basically, all we have to do, is append our request body, with the `owner` field, and set the value to the logged in user's id
     req.body.owner = req.session.userId
     // we'll use the mongoose model method `create` to make a new fruit
     Game.create(req.body)
         .then(game => {
             // send the user a '201 created' response, along with the new fruit
-            res.status(201).json({ game : game.toObject() })
+            res.status(201).json({ game: game.toObject() })
         })
         .catch(error => console.log(error))
 })
 
+// GET request
+// only fruits owned by logged in user
+// we're going to build another route, that is owner specific, to list all the fruits owned by a certain(logged in) user
+router.get('/mine', (req, res) => {
+    // find the fruits, by ownership
+    Game.find({ owner: req.session.userId })
+    // then display the fruits
+        .then(games => {
+            res.status(200).json({ games: games })
+        })
+    // or throw an error if there is one
+        .catch(error => res.json(error))
+})
+
+// GET request to show the update page
+router.get("/edit/:id", (req, res) => {
+    res.send('edit page')
+})
+
 // PUT request
 // update route -> updates a specific fruit
-router.put("/games/:id", (req, res) => {
+router.put("/:id", (req, res) => {
     // console.log("I hit the update route", req.params.id)
     const id = req.params.id
-    
-    // for now, we'll use a simple mongoose model method, eventually we'll update this(and all) routes and we'll use a different method
-    // we're using findByIdAndUpdate, which needs three arguments
-    // it needs an id, it needs the req.body, and whether the info is new
-    Game.findByIdAndUpdate(id, req.body, { new: true })
+    Game.findById(id)
         .then(game => {
-            console.log('the game from update', game)
-            // update success is called '204 - no content'
-            res.sendStatus(204)
+            if (game.owner == req.session.userId) {
+                res.sendStatus(204)
+                return game.updateOne(req.body)
+            } else {
+                res.sendStatus(401)
+            }
         })
-        .catch(err => console.log(err))
+        .catch(error => res.json(error))
 })
 
 // DELETE request
 // destroy route -> finds and deletes a single resource(fruit)
-router.delete("/games/:id", (req, res) => {
-    // grab the id from the request
-    const id = req.params.id
-    // find and delete the fruit
-    Game.findByIdAndRemove(id)
-        // send a 204 if successful
-        .then(() => {
-            res.sendStatus(204)
+// here lies our old API delete route
+// router.delete("/:id", (req, res) => {
+//     // grab the id from the request
+//     const id = req.params.id
+//     // find and delete the fruit
+//     // Fruit.findByIdAndRemove(id)
+//     Fruit.findById(id)
+//         .then(fruit => {
+//             // we check for ownership against the logged in user's id
+//             if (fruit.owner == req.session.userId) {
+//                 // if successful, send a status and delete the fruit
+//                 res.sendStatus(204)
+//                 return fruit.deleteOne()
+//             } else {
+//                 // if they are not the user, send the unauthorized status
+//                 res.sendStatus(401)
+//             }
+//         })
+//         // send the error if not
+//         .catch(err => res.json(err))
+// })
+router.delete('/:id', (req, res) => {
+    // get the fruit id
+    const gameId = req.params.id
+
+    // delete and REDIRECT
+    Game.findByIdAndRemove(gameId)
+        .then(game => {
+            // if the delete is successful, send the user back to the index page
+            res.redirect('/games')
         })
-        // send the error if not
-        .catch(err => res.json(err))
+        .catch(error => {
+            res.json({ error })
+        })
 })
 
 // SHOW request
@@ -108,12 +135,17 @@ router.get("/:id", (req, res) => {
         // we can also populate fields of our subdocuments
         .populate("comments.author", "username")
         .then(game => {
-            res.json({ game: game })
+            const username = req.session.username
+            const loggedIn = req.session.loggedIn
+            const userId = req.session.userId
+            // res.json({ fruit: fruit })
+            res.render('games/show', { game, username, loggedIn, userId })
         })
         .catch(err => console.log(err))
 })
+
+
 //////////////////////////////////////////
 // Export the Router
 //////////////////////////////////////////
-
 module.exports = router
