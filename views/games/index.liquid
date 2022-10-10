@@ -1,6 +1,7 @@
 {% layout 'layout.liquid' %}
 {% block content %}
   <div>
+{% if games.length > 0%}
     <h2 class="display-6">All Games</h2>
     <div class="row">
       {% for game in games %}
@@ -29,4 +30,9 @@
       {% endfor %}
     </div>
   </div>
-{% endblock %}}}}
+{% else %}
+      <div>
+          <h2 class="display-6">No Games yet... time to add some!</h2>
+      </div>
+  {% endif %}
+{% endblock %}

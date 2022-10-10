@@ -5,13 +5,12 @@
             <h2>{{game.name}}</h2>
             <h4>
                 {% if game.freeToPlay %}
-                    Free To Play
+                    Free to play!
                 {% else %}
                     Get the credit card
                 {% endif %}
             </h4>
             <h4>The genre of this game is: {{game.genre}}</h4>
-            <div class="colorBox" style="background-color: darkred;"></div>
             {% if game.owner == userId %}
                 <div class="btn-group">
                     {%- comment -%} first button will send us to the edit page {%- endcomment -%}
@@ -28,11 +27,11 @@
         <hr>
         {% if loggedIn %}
             <div class="col-md-6">
-                <form action="/comments/{{fruit.id}}" method="POST">
+                <form action="/comments/{{game.id}}" method="POST">
                     <fieldset>
                         <legend>Add Comment</legend>
                         <label class="form-label">comment:</label>
-                        <input class="form-control mb-1" type="text" placeholder="enter your comment..." name="note" required>
+                        <input class="form-control" type="text" placeholder="enter your comment..." name="note" required>
                     </fieldset>
                     <input class="btn btn-success" type="submit" value="add comment">
                 </form>
@@ -47,7 +46,7 @@
             <div class="container-sm justify-content-center">
                 <div class="col-md-8 col-lg-6">
                     {% for comment in game.comments %}
-                        {% render '../comment.liquid', comment: comment, userId: userId, fruit: fruit %}
+                        {% render '../comment.liquid', comment: comment, userId: userId, game: game %}
                     {% endfor %}
                 </div>
             </div>

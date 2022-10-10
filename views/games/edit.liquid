@@ -1,0 +1,45 @@
+{% layout 'layout.liquid' %}
+{% block content %}
+
+    <div class="container-sm">
+        {%- comment -%} change the action {%- endcomment -%}
+        {%- comment -%} add values to input fields {%- endcomment -%}
+        {%- comment -%} add a back button {%- endcomment -%}
+        <form action="/games/{{game.id}}?_method=PUT" method="POST">
+            <fieldset>
+                <legend>Edit {{game.name}}</legend>
+                <label class="form-label">Name: </label>
+                <input
+                    class="form-control"
+                    type="text"
+                    name="name"
+                    placeholder="enter the name of the game"
+                    value="{{ game.name }}"
+                >
+                <label class="form-label">Genre: </label>
+                <input
+                    class="form-control"
+                    type="text"
+                    name="genre"
+                    placeholder="what genre is the fruit?"
+                    value="{{ game.genre }}"
+                >
+                <label class="form-label">Free To Play?: </label>
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="freeToPlay"
+                    {% if game.freeToPlay %}
+                        checked
+                    {% endif %}
+                >
+            </fieldset>
+            <input
+                class="btn btn-success"
+                type="submit"
+                value="Edit {{game.name}}"
+            >
+        </form>
+    </div>
+
+{% endblock %}
