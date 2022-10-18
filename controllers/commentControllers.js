@@ -65,8 +65,6 @@ router.delete('/delete/:gameId/:commId', (req, res) => {
                     theComment.remove()
                     game.save()
                     res.redirect(`/games/${game.id}`)
-                    // return the saved fruit
-                    // return fruit.save()
                 } else {
                     const err = 'you%20are%20not%20authorized%20for%20this%20action'
                     res.redirect(`/error?error=${err}`)
